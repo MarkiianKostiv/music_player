@@ -1,39 +1,22 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
+import { Slot } from 'expo-router';
+import { SafeAreaView, Platform, StatusBar, useColorScheme } from 'react-native';
+import { Platforms } from '../constants/platforms';
 
-import { useColorScheme } from '@/hooks/useColorScheme';
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
-
-export default function RootLayout() {
+export default function Layout() {
+  const marginTop = Platform.OS === Platforms.ANDROID ? StatusBar.currentHeight || 0 : 0;
   const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
-
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
-  }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <SafeAreaView
+      className={
+        colorScheme === 'dark'
+          ? 'bg-background-main-color dark flex-1 p-5'
+          : 'bg-background-main-color'
+      }
+      style={{ marginTop }}>
+      <StatusBar barStyle={colorScheme === 'dark' ? 'dark-content' : 'dark-content'} />
+
+      <Slot />
+    </SafeAreaView>
   );
 }
