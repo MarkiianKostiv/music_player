@@ -1,21 +1,33 @@
-import { StatusBar } from 'expo-status-bar';
-import { Text, View } from 'react-native';
-import { Routes } from '../navigation/routes';
-
-import '../global.css';
-import { Link } from 'expo-router';
+import { View, Text, Pressable } from 'react-native';
+import { useFirstLaunch } from '../hooks/useFirstLaunch';
+import { useState } from 'react';
+import { IntroComponent } from 'components/intro';
+import { AppHeader } from 'components/appHeader';
+import { SongList } from 'components/songsList';
 
 export default function Home() {
-  return (
-    <View className="">
-      <View>
-        <Text className="text-main-color">Music Player</Text>
-        <Text className="text-red-600">Listen your favorite songs</Text>
-        <Text className="text-red-600">
-          Try advanced fetuses of searching your favorite music
-          <Link href={Routes.CHAT}>Use Our Chat</Link>
+  const isFirstLaunch = useFirstLaunch();
+  const [introDone, setIntroDone] = useState(false);
+
+  if (isFirstLaunch === null) return null;
+
+  if (isFirstLaunch && !introDone) {
+    return (
+      <Pressable
+        className="flex-1 items-center justify-center bg-background-main-color"
+        onPress={() => setIntroDone(true)}>
+        <IntroComponent />
+        <Text className="mt-6 text-base font-semibold text-main-color">
+          Tap anywhere to continue
         </Text>
-      </View>
+      </Pressable>
+    );
+  }
+
+  return (
+    <View className="flex-1 bg-background-main-color">
+      <AppHeader />
+      <SongList />
     </View>
   );
 }
