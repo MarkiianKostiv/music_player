@@ -18,11 +18,16 @@ export const SongItem: FC<SongItemProps> = ({ title, artist, isPlaying = false, 
         android_ripple={{ color: '#ffffff22' }}
         className="flex-row items-center justify-between rounded-xl bg-secondary-color px-4 py-3 active:opacity-80"
         style={{ overflow: 'hidden' }}>
-        <View>
-          <Text className="text-lg font-medium text-background-main-color">{title}</Text>
+        <View className="w-[70%]">
+          <Text
+            className="mr-2 flex-1 text-lg font-medium text-background-main-color"
+            numberOfLines={1}
+            ellipsizeMode="tail">
+            {title}
+          </Text>
           {!!artist && <Text className="text-sm text-main-color">{artist}</Text>}
         </View>
-        <View className="rounded-full p-1">
+        <View>
           <MaterialIcons
             name={isPlaying ? 'pause' : 'play-arrow'}
             size={28}
