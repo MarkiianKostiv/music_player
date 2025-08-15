@@ -1,39 +1,31 @@
-import { useAudioPlayer } from 'expo-audio';
+import { useAudioPlayer, useAudioPlayerStatus } from 'expo-audio';
 
 export function useCustomPlayer() {
   const player = useAudioPlayer();
+  const status = useAudioPlayerStatus(player);
 
   interface PlaySongParams {
     uri: string;
     currentUri: string | null;
     isPlaying: boolean;
-    setIsPlaying: (status: boolean) => void;
     setCurrentSongUri: (uri: string) => void;
   }
-  const playSong = ({
-    uri,
-    currentUri,
-    isPlaying,
-    setIsPlaying,
-    setCurrentSongUri,
-  }: PlaySongParams) => {
+
+  const playSong = ({ uri, currentUri, isPlaying, setCurrentSongUri }: PlaySongParams) => {
     if (currentUri === uri && isPlaying) {
       player.pause();
-      setIsPlaying(false);
       return;
     }
 
     if (currentUri === uri && !isPlaying) {
       player.play();
-      setIsPlaying(true);
       return;
     }
 
     player.replace({ uri });
     setCurrentSongUri(uri);
     player.play();
-    setIsPlaying(true);
   };
 
-  return { playSong };
+  return { playSong, player, status };
 }

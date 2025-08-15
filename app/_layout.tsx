@@ -3,6 +3,7 @@ import { SafeAreaView, Platform, StatusBar, useColorScheme } from 'react-native'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
 import { Platforms } from '../constants/platforms';
+import { PlayerProvider } from 'providers/playerProvider';
 
 import '../global.css';
 
@@ -13,16 +14,18 @@ export default function Layout() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <SafeAreaView
-        className={
-          colorScheme === 'dark'
-            ? 'dark flex-1 bg-background-main-color p-5'
-            : 'bg-background-main-color'
-        }
-        style={{ marginTop }}>
-        <StatusBar barStyle={colorScheme === 'dark' ? 'dark-content' : 'dark-content'} />
-        <Slot />
-      </SafeAreaView>
+      <PlayerProvider>
+        <SafeAreaView
+          className={
+            colorScheme === 'dark'
+              ? 'dark flex-1 bg-background-main-color p-5'
+              : 'bg-background-main-color'
+          }
+          style={{ marginTop }}>
+          <StatusBar barStyle={colorScheme === 'dark' ? 'dark-content' : 'dark-content'} />
+          <Slot />
+        </SafeAreaView>
+      </PlayerProvider>
     </QueryClientProvider>
   );
 }

@@ -1,60 +1,35 @@
 import { View, Text, Pressable } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useSongsStore } from 'stores/songs.store';
-import { useAudioPlayer } from 'expo-audio';
-import { useEffect, useState } from 'react';
 import Animated, { FadeInUp, FadeOutDown } from 'react-native-reanimated';
-import { useCustomPlayer } from 'hooks/useCustomPlayer';
+import { usePlayer } from 'providers/playerProvider';
+import { Song } from 'types/song.type';
+import { Link } from 'expo-router';
+import { Routes } from 'navigation/routes';
 
-export function BottomMiniPlayer() {
-  const { currentUri, isPlaying, songs, setIsPlaying, setCurrentSongUri } = useSongsStore();
-  const player = useAudioPlayer();
-  const [progress, setProgress] = useState(0);
-  const [duration, setDuration] = useState(0);
+export function BottomMiniPlayer({ songs }: { songs: Song[] }) {
+  const { currentUri, setCurrentSongUri } = useSongsStore();
+  const { playSong, status } = usePlayer();
 
-  const { playSong } = useCustomPlayer();
+  const currentIndex = songs.findIndex((song) => song.uri === currentUri);
+  const currentSong = songs[currentIndex];
 
-  // Знаходимо поточну пісню
-  const currentSong = songs.find((song) => song.uri === currentUri);
+  if (!currentSong) return null;
 
-  //   console.log('Current Song:', currentSong);
+  const nextIndex = (currentIndex + 1) % songs.length;
+  const prevIndex = (currentIndex - 1 + songs.length) % songs.length;
 
-  // Оновлюємо прогрес кожні 100мс
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
+  const nextSong = songs[nextIndex];
+  const prevSong = songs[prevIndex];
 
-    if (isPlaying && currentUri) {
-      interval = setInterval(() => {
-        const currentTime = player.currentTime;
-        const totalDuration = player.duration;
-
-        if (totalDuration > 0) {
-          setProgress(currentTime / totalDuration);
-          if (duration === 0) setDuration(totalDuration);
-        }
-      }, 100);
-    }
-
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [isPlaying, currentUri, player, duration]);
-
-  // Слухаємо зміни стану плеєра
-  useEffect(() => {
-    const subscription = player.addListener('playbackStatusUpdate', (status) => {
-      if (status.isLoaded) {
-        if (status.didJustFinish) {
-          setIsPlaying(false);
-        }
-        if (status.duration) {
-          setDuration(status.duration);
-        }
-      }
+  if (status.didJustFinish) {
+    playSong({
+      uri: nextSong.uri,
+      currentUri,
+      isPlaying: false,
+      setCurrentSongUri,
     });
-
-    return () => subscription?.remove();
-  }, [player, setIsPlaying]);
+  }
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -62,49 +37,85 @@ export function BottomMiniPlayer() {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // Не рендеримо, якщо немає поточної пісні
-  if (!currentUri || !currentSong) return null;
+  const handlePlayPause = () => {
+    playSong({
+      uri: currentSong.uri,
+      currentUri,
+      isPlaying: status.playing,
+      setCurrentSongUri,
+    });
+  };
+
+  const handlePrev = () => {
+    playSong({
+      uri: prevSong.uri,
+      currentUri,
+      isPlaying: false,
+      setCurrentSongUri,
+    });
+  };
+
+  const handleNext = () => {
+    playSong({
+      uri: nextSong.uri,
+      currentUri,
+      isPlaying: false,
+      setCurrentSongUri,
+    });
+  };
 
   return (
     <Animated.View
       entering={FadeInUp.duration(300)}
       exiting={FadeOutDown.duration(300)}
       className="border-main-color/20 absolute bottom-0 left-0 right-0 border-t bg-secondary-color">
-      {/* Progress Bar */}
       <View className="bg-main-color/20 h-1">
-        <View className="h-full bg-main-color" style={{ width: `${progress * 100}%` }} />
+        <View
+          className="h-full bg-red-700"
+          style={{
+            width: `${status.duration ? (status.currentTime / status.duration) * 100 : 0}%`,
+          }}
+        />
       </View>
 
-      {/* Main Content */}
       <View className="flex-row items-center justify-between px-4 py-3">
-        {/* Song Info */}
         <View className="mr-4 flex-1">
-          <Text
-            className="text-base font-medium text-background-main-color"
-            numberOfLines={1}
-            ellipsizeMode="tail">
-            {currentSong.title.replace('.mp3', '')}
-          </Text>
-          <Text className="text-sm text-main-color">
-            {formatTime(player.currentTime)} / {formatTime(currentSong.duration!)}
-          </Text>
+          <Link className="flex w-full flex-col" href={`${Routes.SONGS}/${currentSong.id}`}>
+            <View>
+              <Text
+                className="flex text-base font-medium text-background-main-color"
+                numberOfLines={1}
+                ellipsizeMode="tail">
+                {currentSong.title.replace('.mp3', '')}
+              </Text>
+            </View>
+
+            <View>
+              <Text className="mt-1 flex flex-1 text-sm text-main-color">
+                {formatTime(status.currentTime)} / {formatTime(currentSong.duration ?? 0)}
+              </Text>
+            </View>
+          </Link>
         </View>
 
-        {/* Controls */}
         <View className="flex-row items-center gap-4">
           <Pressable
-            onPress={() => {
-              playSong({
-                uri: currentSong.uri,
-                currentUri,
-                isPlaying,
-                setIsPlaying,
-                setCurrentSongUri,
-              });
-            }}
+            onPress={handlePrev}
             className="p-2"
             android_ripple={{ color: '#ffffff22', radius: 24 }}>
-            <MaterialIcons name={isPlaying ? 'pause' : 'play-arrow'} size={32} color="#fff" />
+            <MaterialIcons name="skip-previous" size={32} color="#fff" />
+          </Pressable>
+          <Pressable
+            onPress={handlePlayPause}
+            className="p-2"
+            android_ripple={{ color: '#ffffff22', radius: 24 }}>
+            <MaterialIcons name={status.playing ? 'pause' : 'play-arrow'} size={32} color="#fff" />
+          </Pressable>
+          <Pressable
+            onPress={handleNext}
+            className="p-2"
+            android_ripple={{ color: '#ffffff22', radius: 24 }}>
+            <MaterialIcons name="skip-next" size={32} color="#fff" />
           </Pressable>
         </View>
       </View>

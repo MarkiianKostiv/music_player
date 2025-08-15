@@ -53,7 +53,7 @@ export default function Home() {
       {songs && songs.length > 0 ? (
         <>
           <SongList songs={songs} />
-          <BottomMiniPlayer />
+          <BottomMiniPlayer songs={songs} />
         </>
       ) : (
         <InfoMessageComponent message="No songs found. Please add some music to your device." />

@@ -7,11 +7,9 @@ type SongsStore = {
   loading: boolean;
   error: string | null;
   currentUri: string | null;
-  isPlaying: boolean;
   fetchSongs: (force?: boolean) => Promise<Song[] | []>;
   clearSongs: () => void;
   setCurrentSongUri: (uri: string | null) => void;
-  setIsPlaying: (status: boolean) => void;
 };
 
 export const useSongsStore = create<SongsStore>((set, get) => ({
@@ -19,7 +17,6 @@ export const useSongsStore = create<SongsStore>((set, get) => ({
   loading: false,
   error: null,
   currentUri: null,
-  isPlaying: false,
 
   fetchSongs: async (force = false) => {
     const { songs } = get();
@@ -55,17 +52,10 @@ export const useSongsStore = create<SongsStore>((set, get) => ({
     });
   },
 
-  setIsPlaying: (status: boolean) => {
-    set({
-      isPlaying: status,
-    });
-  },
-
   clearSongs: async () => {
     set({
       songs: [],
       currentUri: null,
-      isPlaying: false,
     });
   },
 }));

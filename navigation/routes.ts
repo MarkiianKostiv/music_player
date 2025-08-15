@@ -3,4 +3,5 @@ export const Routes = {
   PROFILE: '/profile',
   SETTINGS: '/settings',
   CHAT: '/chat',
+  SONGS: '/songs',
 } as const;
