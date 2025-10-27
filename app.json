@@ -10,10 +10,7 @@
     "experiments": {
       "tsconfigPaths": true
     },
-    "plugins": [
-      "expo-router",
-      "expo-audio"
-    ],
+    "plugins": ["expo-router", "expo-audio"],
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -22,9 +19,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },
