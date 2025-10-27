@@ -12,6 +12,8 @@ type SongsStore = {
   setCurrentSongUri: (uri: string | null) => void;
 };
 
+const testVariable = 42;
+
 export const useSongsStore = create<SongsStore>((set, get) => ({
   songs: [],
   loading: false,
