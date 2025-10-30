@@ -3,4 +3,5 @@ export type Song = {
   uri: string;
   title: string;
   duration?: number;
+  artist?: string;
 };

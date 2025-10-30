@@ -23,14 +23,14 @@ export const SongItem: FC<SongItemProps> = ({
       <Pressable
         onPress={onPressPlay}
         android_ripple={{ color: '#ffffff22' }}
-        className={`flex-row items-center justify-between rounded-xl px-4 py-3 active:opacity-80
+        className={`flex h-16 flex-row items-center justify-between rounded-xl px-4 active:opacity-80
         ${isSelected ? 'border-2 border-main-color' : 'border border-transparent'}
         bg-secondary-color
       `}
         style={{ overflow: 'hidden' }}>
         <View className="w-[70%]">
           <Text
-            className="mr-2 flex-1 text-lg font-medium text-background-main-color"
+            className="mr-2 text-lg font-medium text-background-main-color"
             numberOfLines={1}
             ellipsizeMode="tail">
             {title.replace('.mp3', '')}
