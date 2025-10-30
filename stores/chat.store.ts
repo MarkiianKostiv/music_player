@@ -44,12 +44,11 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       user: { _id: 'user', name: 'You' },
     };
 
-    // одразу оновлюємо стор, щоб контекст був свіжим
     set((state) => ({
       messages: [userMessage, ...state.messages],
     }));
 
-    const allMessages = get().messages; // уже містить нове повідомлення
+    const allMessages = get().messages;
 
     try {
       set({ loading: true, error: null });
@@ -57,7 +56,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       const lastUserMessages = allMessages
         .filter((m) => m.user._id === 'user')
         .slice(0, 4)
-        .reverse() // беремо 4 останні (бо FlatList інвертована)
+        .reverse()
         .map((m) => ({
           query: m.text,
           type: 'prev_context_message' as const,

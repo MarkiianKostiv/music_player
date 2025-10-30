@@ -1,4 +1,5 @@
-import { View, Text, TextInput } from 'react-native';
+import { View, TextInput } from 'react-native';
+import { Loader } from 'components/loader';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import Animated from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
@@ -66,9 +67,11 @@ export default function Home() {
 
   if (isLoading) {
     return (
-      <View className="flex-1 items-center justify-center bg-background-main-color">
-        <Text className="text-main-color">Loading songs...</Text>
-      </View>
+      <Loader
+        text="Loading songs..."
+        containerClassName="flex-1 items-center justify-center bg-background-main-color"
+        textClassName="text-main-color"
+      />
     );
   }
 
