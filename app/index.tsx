@@ -24,11 +24,7 @@ export default function Home() {
   const [showIntro, setShowIntro] = useState(true);
   const { fetchSongs } = useSongsStore();
 
-  const {
-    data: songs = [],
-    isLoading,
-    isError,
-  } = useQuery<Song[]>({
+  const { isLoading, isError } = useQuery<Song[]>({
     queryKey: ['songs'],
     queryFn: async () => {
       const data = await fetchSongs();

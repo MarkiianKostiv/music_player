@@ -1,8 +1,6 @@
 import { View, Animated } from 'react-native';
 import { useBeatVisualizer } from 'hooks/useBeatVisualizer';
 
-const COLORS = ['#ff6b6b', '#51cf66', '#4dabf7', '#ffd43b', '#a855f7', '#ff9f43', '#ff7ab6'];
-
 interface BeatVisualizerProps {
   isPlaying: boolean;
   numBars?: number;

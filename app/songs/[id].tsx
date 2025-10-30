@@ -1,4 +1,4 @@
-import { useLocalSearchParams, Link, useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { View, Text, Pressable } from 'react-native';
 import { GestureDetector } from 'react-native-gesture-handler';
 import Animated from 'react-native-reanimated';
@@ -19,10 +19,6 @@ export default function SongScreen() {
 
   const currentIndex = songs.findIndex((song) => song.id === id);
   const currentSong = songs[currentIndex];
-
-  if (!currentSong) {
-    return <ErrorComponent message="Song not found" />;
-  }
 
   const nextIndex = (currentIndex + 1) % songs.length;
   const prevIndex = (currentIndex - 1 + songs.length) % songs.length;
@@ -78,6 +74,10 @@ export default function SongScreen() {
     direction: 'down',
     onSuccess: () => router.push(Routes.HOME),
   });
+
+  if (!currentSong) {
+    return <ErrorComponent message="Song not found" />;
+  }
 
   return (
     <GestureDetector gesture={downGesture}>
